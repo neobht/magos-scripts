@@ -53,7 +53,7 @@ fi
 mkdir -p $root_br/{dev,proc,sys,etc/apt,etc/urpmi}
 
 for tm in {dev,proc,sys,etc/apt,etc/urpmi}; do
-    [ -d $tm ] && mount -o bind /$tm $root_br/$tm
+    [ /$tm ] && mount -o bind /$tm $root_br/$tm
 done
 
 mkdir -p $root_br/tmp
