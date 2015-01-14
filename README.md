@@ -1,0 +1,2 @@
+# magos-scripts
+MagOS Scripts
