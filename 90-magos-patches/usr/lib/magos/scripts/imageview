@@ -1,0 +1,31 @@
+#!/bin/sh
+PKDE=/usr/bin/gwenview
+PGNOME=/usr/bin/gqview
+PLXDE=/usr/bin/gpicview
+PDEF=/usr/bin/gpicview
+[ -x $PLXDE ] || PLXDE=$PDEF
+[ -x $PKDE ] || PKDE=$PDEF
+[ -x $PGNOME ] || PGNOME=$PDEF
+
+. /usr/lib/magos/functions
+
+DE=$(detectDE)
+
+case "$DE" in
+    kde)
+    $PKDE "$1"
+    ;;
+
+    gnome)
+    $PGNOME "$1"
+    ;;
+
+    gnome-shell)
+    $PGNOME "$1"
+    ;;
+
+    lxde)
+    $PLXDE "$1"
+    ;;
+
+esac
