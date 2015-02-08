@@ -18,7 +18,7 @@ export PATH=/usr/lib/magos/scripts:$PATH
 
 . liblinuxlive
 
-if [ -d /mnt/live/memory ]; then
+if [ -f /mnt/live/VERSION ]; then
     memory_path=/mnt/live/memory
     bnd=images
 else

@@ -23,7 +23,16 @@ PATH=.:$(dirname $0):/usr/lib:$PATH
 allow_only_root
 MODULE="$(basename "$1")"
 
-IMAGES=/mnt/live/memory/images
+
+if [ -f /mnt/live/VERSION ]; then
+    IMAGES=/mnt/live/memory/images
+    MODULES=/mnt/live/memory/modules
+else
+    IMAGES=/memory/bundles
+    MODULES=/memory/modules
+fi
+
+#IMAGES=/mnt/live/memory/images
 IPREV=empty
 
 if [ "$MODULE" = "" -o ! -e "$IMAGES/$MODULE" ]; then
