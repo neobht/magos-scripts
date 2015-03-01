@@ -76,14 +76,14 @@ done
 
 #dir2lzm $mod_br/var/lib/rpm $1_rpmbase.$MODULEFORMAT
 
-rm -rf $mod_br/var/lib/rpm
-rm -rf $mod_br/var/cache/apt
-rm -rf $mod_br/var/cache/urpmi
-rm -rf $mod_br/var/lib/apt/lists
-rm -rf $mod_br/tmp
-rm -rf $root_br/{dev,proc,sys}
+rm -rf $mod_br/var/lib/rpm >/dev/null
+rm -rf $mod_br/var/cache/apt >/dev/null
+rm -rf $mod_br/var/cache/urpmi >/dev/null
+rm -rf $mod_br/var/lib/apt/lists >/dev/null
+rm -rf $mod_br/tmp >/dev/null
+rm -rf $root_br/{dev,proc,sys} >/dev/null
 
 dir2xzm $mod_br "$(basename $XZM_NAME).$MODULEFORMAT"
 
-rm -rf $mod_br
-rm -rf $root_br
+rm -rf $mod_br >/dev/null
+rm -rf $root_br >/dev/null

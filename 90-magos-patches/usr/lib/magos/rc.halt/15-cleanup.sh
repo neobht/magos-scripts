@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENABLED=yes
+ENABLED=no
 [ "$ENABLED" != "yes" ] && exit 0
 
 # some cleanups

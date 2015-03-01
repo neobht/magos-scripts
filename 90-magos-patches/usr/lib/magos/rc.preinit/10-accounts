@@ -11,7 +11,7 @@ ENABLED=yes
 
 DEFAULTPASSWD='$2a$08$7zaCsmtvyXcGKVC3jRkUkeLnscv6s0mkXJ4GnJfrMzgmcMZzvF2a2'
 DEFAULTROOTPASSWD='$2a$08$6Sd1ei3xkrWq21ypHSlgZOOlViPgyi4u.g7P0hZgpHx43cWwjO/Ji'
-DEFAULTUSER=live
+DEFAULTUSER=user
 USERGROUPS=audio,video,usb,vboxusers
 NOSECUREROOTPASSWD=$DEFAULTROOTPASSWD
 ADMGROUPS=wheel
@@ -33,9 +33,9 @@ for a in $(echo $NEEDEDUSERS | tr ",;" " " ) ;do
    ADDGROUPS=$USERGROUPS
    [ "$NEEDEDUID" = "$ADMUID" -a "$ADDADM" = "yes"  ] && ADDGROUPS=$USERGROUPS,$ADMGROUPS
    if ! grep -q ^$NEEDEDUSER: etc/passwd ;then
-        chroot . usr/sbin/adduser -M -G users -u $NEEDEDUID $NEEDEDUSER >/dev/null  2>&1
+        chroot . usr/sbin/adduser -M -G users -u $NEEDEDUID $NEEDEDUSER >/dev/null  2>&1 || chroot . usr/sbin/useradd -M -G users -u $NEEDEDUID $NEEDEDUSER >/dev/null  2>&1
         chroot . usr/sbin/usermod -a -G $ADDGROUPS $NEEDEDUSER >/dev/null  2>&1
-        chroot . usr/bin/passwd -uf $NEEDEDUSER >/dev/null  2>&1
+        chroot . usr/bin/passwd -uf $NEEDEDUSER >/dev/null  2>&1 || chroot . usr/bin/passwd -d $NEEDEDUSER >/dev/null  2>&1
         [ "$NEEDEDPASS" = "" ] || (sed -i s=^$NEEDEDUSER::=$NEEDEDUSER:"$NEEDEDPASS":= etc/shadow && sed -i s=^$NEEDEDUSER:\!\!:=$NEEDEDUSER:"$NEEDEDPASS":= etc/tcb/$NEEDEDUSER/shadow )
    else
         [ "$NEEDEDPASS" != "$DEFAULTPASSWD" -a "$NEEDEDPASS" != "" ] && chroot . usr/bin/passwd -d $NEEDEDUSER >/dev/null  2>&1
