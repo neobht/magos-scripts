@@ -30,8 +30,11 @@ LIVEHOME=livehome
 LIVECHANGES=livesave
 LIVEDATA=livedata
 LIVEREPOSITORY=$MOUNTDIR/liverepository
-MKSQOPT=
+MKSQOPT=" -b 512K "
 MODULEFORMAT="xzm"
+CMDLNFILE=/memory/cmdline
+[ -f $CMDLNFILE ] || CMDLNFILE=/mnt/live/tmp/cmdline
+[ -f $CMDLNFILE ] || CMDLNFILE=/tmp/cmdline
 
 # this will be replaced by build script, so never change the following line!
 LIVECDNAME="MagOS"
@@ -125,6 +128,39 @@ allow_only_root()
      echo "Only root can run $(basename $0)"; exit 1
   fi
 }
+#============================================================
+# MagOS debug functions
+#============================================================
+debug_mode() {
+if [ "$DEBUG_IS_ENABLED"  -o "$DEBUGMODE" == "yes" ] ; then
+name=$(basename $0)
+slash="/"
+[ "$(pwd)" == "/union" ] && slash=""
+if ! test -f  ${slash}var/log/magos/${name}.log ; then
+  echo "$0 --  debug mode enabled"
+  test -d ${slash}var/log/magos || mkdir -p ${slash}var/log/magos
+  echo $(date) >   ${slash}var/log/magos/${name}.log || echo "can not create log file"
+  $0 "$@" 2>&1 | tee -a ${slash}var/log/magos/${name}.log 
+  exit 0
+fi
+fi
+}
+
+echodebug() {
+[ "$DEBUG_IS_ENABLED"  -o "$DEBUGMODE" == "yes" ] && echo "$1"
+if [ -n "$2" ] ;then 
+  command=$2
+  shift
+  shift
+  if [ -z $1 ] ;then
+    $command 
+  else
+    $command "$@"
+  fi
+fi
+}
+
+
 
 # ===========================================================
 # text processing functions
@@ -137,9 +173,7 @@ cmdline_parameter()
 {
    debug_log "cmdline_parameter" "$*"
    log "searching for bootparam: $1"
-   ADDFILE=/tmp/cmdline
-   [ -f /liblinuxlive ] || ADDFILE=/mnt/live$ADDFILE 
-   echo -n " " | cat - /proc/cmdline $ADDFILE 2>/dev/null | egrep -m1 -o "(^|[[:space:]])$1([[:space:]]|\$)" | tr -d " "
+   echo -n " " | cat - /proc/cmdline $CMDLNFILE 2>/dev/null | egrep -m1 -o "(^|[[:space:]])$1([[:space:]]|\$)" | tr -d " "
 }
 
 # look into cmdline and echo value of $1 option
@@ -149,9 +183,7 @@ cmdline_value()
 {
    debug_log "cmdline_value" "$*"
    log "searching for bootparam value: $1"
-   ADDFILE=/tmp/cmdline
-   [ -f /liblinuxlive ] || ADDFILE=/mnt/live$ADDFILE
-   echo -n " " | cat - /proc/cmdline $ADDFILE 2>/dev/null | egrep -m1 -o "(^|[[:space:]])$1=[^[:space:]]+" | cut -d "=" -f 2-
+   echo -n " " | cat - /proc/cmdline $CMDLNFILE 2>/dev/null | egrep -m1 -o "(^|[[:space:]])$1=[^[:space:]]+" | cut -d "=" -f 2-
 }
 
 # Make sure the part of a script after 'mutex_lock' call is atomic,

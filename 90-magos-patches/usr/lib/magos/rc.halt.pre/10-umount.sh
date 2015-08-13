@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENABLED=no
+ENABLED=yes
 [ "$ENABLED" != "yes" ] && exit 0
 
 PATH=/usr/lib/magos/scripts:$PATH

@@ -41,14 +41,9 @@ PATH=.:$(dirname $0):/usr/lib:$PATH
 . liblinuxlive || exit 3
 
 allow_only_root
+IMAGES=/mnt/live/memory/images
+MODULES=/mnt/live/memory/modules
 
-if [ -f /mnt/live/VERSION ]; then
-    IMAGES=/mnt/live/memory/images
-    MODULES=/mnt/live/memory/modules
-else
-    IMAGES=/memory/bundles
-    MODULES=/memory/modules
-fi
 # are we even using union?
 if [ "$(grep '^aufs / ' /proc/mounts)$(grep '^unionfs / ' /proc/mounts)" = "" ]; then
    echo "not in the live mode, can't continue. Try lzm2dir $MODULE /"
