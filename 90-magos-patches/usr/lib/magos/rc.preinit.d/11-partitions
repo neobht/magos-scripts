@@ -31,7 +31,7 @@ FSCKFLAG=0
 if [ "$(cmdline_parameter findswap)" ] ;then
     sed -i /FINDSWAP/d etc/fstab
     debug_log "Find linux native patitions"
-    FSWAP=$(blkid -t TYPE="swap" -l | awk -F: '{print $1}')
+    FSWAP=$(/sbin/blkid.real -t TYPE="swap" -l | awk -F: '{print $1}')
     if [ "$FSWAP" ] ;then 
        echo "$FSWAP none swap defaults 0 0 #FINDSWAP" >> etc/fstab
     else
@@ -42,7 +42,7 @@ if [ "$(cmdline_parameter findswap)" ] ;then
              mkswap "$FSWAP"
              DSWAP=$(dirname $FSWAP)
              DEV=$(grep /$UNION/mnt/windows /proc/mounts | awk '{ print $1 }')
-             DEVTYPE=$(blkid $DEV -s TYPE | awk -F\" '{print $2}' )
+             DEVTYPE=$(/sbin/blkid.real $DEV -s TYPE | awk -F\" '{print $2}' )
              if [ "$DSWAP" = "/$UNION/mnt/windows" -a -b "$DEV" ] ;then
                 DEVOPTS=$(fs_options $DEV fstab),uid=$PARTITIONSMOUNTUID
                 echo "$DEV /mnt/windows $DEVTYPE $DEVOPTS 0 $FSCKFLAG # FINDSWAP" >>etc/fstab
@@ -74,9 +74,9 @@ if [ "$PARTITIONSAUTOMOUNT" = "yes" ] ;then
        if grep -q "^$a " /proc/mounts ;then
           grep -m1 "^$a " /proc/mounts | grep /memory | sed s/$/" #PARTITIONSAUTOMOUNT=yes"/ >> etc/fstab
        else
-         DEVTYPE=$(blkid $a | awk -FTYPE=\" '{print $2}'| sed s/\".*// )
+         DEVTYPE=$(/sbin/blkid.real $a | awk -FTYPE=\" '{print $2}'| sed s/\".*// )
          if [ "$DEVTYPE" != "" -a "$DEVTYPE" != "swap" -a "$DEVTYPE" != "udf" -a "$DEVTYPE" != "iso9660" ] ;then
-            DEVLABEL=$( blkid $a | awk -FLABEL=\" '{print $2}'| sed s/\".*//  | tr -d [:cntrl:][:space:])
+            DEVLABEL=$( /sbin/blkid.real $a | awk -FLABEL=\" '{print $2}'| sed s/\".*//  | tr -d [:cntrl:][:space:])
             [ -z "$DEVLABEL" ] && DEVLABEL=$(get_name)
             echo " $PARTITIONSNOMOUNT " | tr ',;' ' ' | grep -q " $DEVLABEL " && continue
             DEVOPTS=$(fs_options $a fstab)
