@@ -11,6 +11,7 @@ ENABLED=yes
 
 DEBUGMODE=no
 . /liblinuxlive  2>/dev/null || . /mnt/live/liblinuxlive
+. /livekitlib  2>/dev/null 
 debug_mode "$0" "$@"
 
 . etc/sysconfig/MagOS
