@@ -41,7 +41,7 @@ PATH=.:$(dirname $0):/usr/lib:$PATH
 . liblinuxlive || exit 3
 
 allow_only_root
-IMAGES=/mnt/live/memory/images
+IMAGES=/memory/bundles
 MODULES=/mnt/live/memory/modules
 
 # are we even using union?
@@ -54,7 +54,7 @@ mkdir -p "$MODULES"
 
 # Test whether the module file is stored in union
 # if yes, then we must move it somewhere else (to RAM) else it can't be added
-if [ -e "/mnt/live/memory/changes/$(readlink -f "$MODULE")" ]; then
+if [ -e "/memory/changes/$(readlink -f "$MODULE")" ]; then
    echo "module file is stored inside the union, moving to $MODULES first..."
    TARGET="$MODULES/$(basename "$MODULE")"
    mv "$MODULE" "$TARGET"

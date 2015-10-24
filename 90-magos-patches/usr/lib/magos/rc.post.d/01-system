@@ -10,6 +10,20 @@ ENABLED=yes
 
 DEBUGMODE=no
 . /liblinuxlive  2>/dev/null || . /mnt/live/liblinuxlive
-debug_mode "$0" "$@"
+[ "$DEBUGMODE" = "yes" ] && debug_mode "$0" "$@"
 
+# sysctl variables
 sysctl -p /etc/sysctl.conf
+
+# If Linux installed on n[t]fs we have to omit killing rootfilesystem mounter when system halt.
+ps -A | egrep 'ntfsmount|rpciod|nfsiod|httpfs|curlftpfs' | awk '{ print $1 }' >> /var/run/sendsigs.omit
+
+# Creating /etc/mtab
+rm -f  /etc/mtab
+ln -sf /proc/mounts /etc/mtab
+
+#Setting clock
+. /etc/sysconfig/clock
+HWCLOCKOPIONS="--utc"
+[ "$UTC" = "false" ] && HWCLOCKOPIONS="--localtime"
+hwclock -s $HWCLOCKOPIONS

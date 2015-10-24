@@ -9,7 +9,7 @@ ENABLED=yes
 
 DEBUGMODE=no
 . /liblinuxlive  2>/dev/null || . /mnt/live/liblinuxlive
-debug_mode "$0" "$@"
+[ "$DEBUGMODE" = "yes" ] && debug_mode "$0" "$@"
 
 XkbModel=pc105
 GRP_TOGGLE=ctrl_shift_toggle
@@ -30,15 +30,18 @@ grep -q xres= /proc/cmdline && XORG_RES=$(cat /proc/cmdline | awk -F xres= '{pri
 if ! [ -z "$XORG_RES" ] ;then 
    XCF=/etc/X11/xorg.conf
    grep -qi modes $XCF 2>/dev/null || XCF=/etc/X11/xorg.conf.d/00-modes.conf
-   grep -qi modes $XCF 2>/dev/null || cat >$XCF <<EOF
+   if grep -qi modes $XCF 2>/dev/null ;then
+      sed -i 's|^[[:space:]]*Modes.*|        Modes "'$XORG_RES'"|' $XCF
+   else
+      cat >$XCF <<EOF
 Section "Screen"
    Identifier "Screen"
    SubSection "Display"
-        Modes "auto"
+        Modes "$XORG_RES"
    EndSubSection
 EndSection
 EOF
-   sed -i 's|^[[:space:]]*Modes.*|        Modes "'$XORG_RES'"|' $XCF
+   fi
 fi
 
 if echo $DPMS | egrep -qi 'no|off|false' ;then

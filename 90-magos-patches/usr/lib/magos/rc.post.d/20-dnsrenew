@@ -9,7 +9,7 @@ ENABLED=yes
 
 DEBUGMODE=no
 . /liblinuxlive  2>/dev/null || . /mnt/live/liblinuxlive
-debug_mode "$0" "$@"
+[ "$DEBUGMODE" = "yes" ] && debug_mode "$0" "$@"
 
 [ -f /etc/sysconfig/MagOS ] && . /etc/sysconfig/MagOS
 [ "$DNS_RENEW" = "yes" ] && cat /mnt/live/etc/resolv.conf >> /etc/resolvconf/resolv.conf.d/head
