@@ -3,8 +3,8 @@
 ENABLED=yes
 [ "$ENABLED" != "yes" ] && exit 0
 
-. /mnt/live/liblinuxlive
-[ -f /etc/sysconfig/MagOS ] && . /etc/sysconfig/MagOS
+. /usr/lib/magos/scripts/liblinuxlive
+. /etc/sysconfig/MagOS
 
 PATH=/usr/lib/magos/scripts:$PATH
 
@@ -31,7 +31,7 @@ if [ -w $SAVETOMODULEDIR -a "$SAVETOMODULE" = "yes" ] ;then
    if [ -d $IMSRC/${SAVETOMODULENAME##*/} ]; then
       echo "Old module exists, we have to concatenate it"
       SRC=/mnt/live/tmp/save2module
-      mkdir $SRC $SRC-rw
+      mkdir -p $SRC $SRC-rw
       mount -t aufs -o shwh,br:$SRC-rw=rw:$CHSRC=rr:$IMSRC/${SAVETOMODULENAME##*/}=rr aufs $SRC
    else 
       SRC=$CHSRC

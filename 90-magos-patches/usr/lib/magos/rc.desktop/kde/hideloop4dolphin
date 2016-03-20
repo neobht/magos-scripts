@@ -2,6 +2,9 @@
 ENABLED=yes
 [ "$ENABLED" != "yes" ] && exit 0
 
+. /usr/lib/magos/os-config
+
+[ "$HIDELOOP4DOLPHIN" != "yes" ] && exit 0
 if [ "$1" != "fork" ] ;then
    $0 fork &
    exit 0
@@ -9,10 +12,7 @@ fi
 
 sleep 3
 
-BOOKMARKS=.local/share/user-places.xbel
-HIDELOOP=255
-HIDERAM=0
-FFP=$HOME/$BOOKMARKS
+FFP=$HOME/$DOLPHINBOOKMARKS
 
 if [ ! -f $FFP ] ;then
    dolphin /home &

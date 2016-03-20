@@ -11,7 +11,6 @@ ENABLED=yes
 
 DEBUGMODE=no
 . /liblinuxlive  2>/dev/null || . /mnt/live/liblinuxlive
-. /livekitlib  2>/dev/null 
 debug_mode "$0" "$@"
 
 . etc/sysconfig/MagOS
@@ -32,18 +31,18 @@ FSCKFLAG=0
 if [ "$(cmdline_parameter findswap)" ] ;then
     sed -i /FINDSWAP/d etc/fstab
     debug_log "Find linux native patitions"
-    FSWAP=$(/sbin/blkid.real -t TYPE="swap" -l | awk -F: '{print $1}')
+    FSWAP=$(blkid.real -t TYPE="swap" -l | awk -F: '{print $1}')
     if [ "$FSWAP" ] ;then 
        echo "$FSWAP none swap defaults 0 0 #FINDSWAP" >> etc/fstab
     else
        debug_log "Capturing windows swapfile"
-       FSWAP=$(find_data /pagefile.sys /$UNION/mnt/windows)
+       FSWAP=$(find_in_computer /pagefile.sys /$UNION/mnt/windows)
        if [ "$FSWAP" ] ;then
           if [ -f "$FSWAP" ] ;then
              mkswap "$FSWAP"
              DSWAP=$(dirname $FSWAP)
              DEV=$(grep /$UNION/mnt/windows /proc/mounts | awk '{ print $1 }')
-             DEVTYPE=$(/sbin/blkid.real $DEV -s TYPE | awk -F\" '{print $2}' )
+             DEVTYPE=$(blkid.real $DEV -s TYPE | awk -F\" '{print $2}' )
              if [ "$DSWAP" = "/$UNION/mnt/windows" -a -b "$DEV" ] ;then
                 DEVOPTS=$(fs_options $DEV fstab),uid=$PARTITIONSMOUNTUID
                 echo "$DEV /mnt/windows $DEVTYPE $DEVOPTS 0 $FSCKFLAG # FINDSWAP" >>etc/fstab
@@ -75,9 +74,9 @@ if [ "$PARTITIONSAUTOMOUNT" = "yes" ] ;then
        if grep -q "^$a " /proc/mounts ;then
           grep -m1 "^$a " /proc/mounts | grep /memory | sed s/$/" #PARTITIONSAUTOMOUNT=yes"/ >> etc/fstab
        else
-         DEVTYPE=$(/sbin/blkid.real $a | awk -FTYPE=\" '{print $2}'| sed s/\".*// )
+         DEVTYPE=$(blkid.real $a | awk -FTYPE=\" '{print $2}'| sed s/\".*// )
          if [ "$DEVTYPE" != "" -a "$DEVTYPE" != "swap" -a "$DEVTYPE" != "udf" -a "$DEVTYPE" != "iso9660" ] ;then
-            DEVLABEL=$( /sbin/blkid.real $a | awk -FLABEL=\" '{print $2}'| sed s/\".*//  | tr -d [:cntrl:][:space:])
+            DEVLABEL=$( blkid.real $a | awk -FLABEL=\" '{print $2}'| sed s/\".*//  | tr -d [:cntrl:][:space:])
             [ -z "$DEVLABEL" ] && DEVLABEL=$(get_name)
             echo " $PARTITIONSNOMOUNT " | tr ',;' ' ' | grep -q " $DEVLABEL " && continue
             DEVOPTS=$(fs_options $a fstab)

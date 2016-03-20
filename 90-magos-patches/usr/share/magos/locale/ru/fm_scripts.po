@@ -18,12 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 
-msgid "create OK"
-msgstr "Профиль создан успешно"
-
-msgid "format OK"
-msgstr "Форматировано успешно"
-
 msgid "Mount point:"
 msgstr "Точка монтирования:"
 
@@ -55,6 +49,9 @@ msgid "enter new size MB"
 msgstr "введите новый размер в MB"
 
 msgid "resize OK"
+msgstr "размер успешно изменен"
+
+msgid "resize to max size OK"
 msgstr "размер успешно изменен"
 
 msgid "Do you realy whant to format profile?"

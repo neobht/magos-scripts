@@ -9,4 +9,3 @@ losetup -a | grep '(.*.[lx]zm)' | awk '{print $3}' | tr -d '()' | sort -r | grep
    while read a ;do
 	deactivate $a >/dev/null 2>&1
    done
-

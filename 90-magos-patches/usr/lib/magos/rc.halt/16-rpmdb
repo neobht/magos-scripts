@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ENABLED=yes
+[ "$ENABLED" != "yes" ] && exit 0
+. /usr/lib/magos/os-config
+
+[ "$RPMDB2TMPFS" != "yes" ] && exit 0
+rm -f /var/lib/rpm/__db* 2>/dev/null
+# RPM5 vs EXTFS bug workaround
+if [ -d /var/lib/rpmdb ] ;then
+   umount /var/lib/rpm
+   rsync -a --del /var/lib/rpmdb/ /var/lib/rpm
+   # if packages are not changed then delete all changes from /var/lib/rpm
+   [ -f /mnt/live/memory/changes/var/lib/rpm/Packages ] || rm -fr /mnt/live/memory/changes/var/lib/rpm
+fi
+umount /var/lib/rpmdb && rmdir /var/lib/rpmdb
+
+sync
